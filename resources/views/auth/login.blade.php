@@ -1,131 +1,64 @@
-{{-- Menggunakan layout utama Anda, jika ada --}}
-@extends('layouts.app') 
+{{-- File: resources/views/auth/login.blade.php --}}
+@extends('layouts.app')
 
 @section('content')
-<style>
-    /* Anda bisa meletakkan CSS ini di file app.css utama Anda */
-    .login-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 70vh; /* Agar form berada di tengah halaman */
-        padding: 2rem 1rem;
-    }
+<div class="min-h-screen bg-stone-100 flex items-center justify-center p-4">
+    <div class="max-w-4xl w-full grid md:grid-cols-2 bg-white rounded-2xl shadow-2xl overflow-hidden">
+        
+        <!-- ================================== -->
+        <!-- KOLOM KIRI: GAMBAR                 -->
+        <!-- ================================== -->
+        <div class="hidden md:block">
+            <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1559496417-e7f25cb247f3?q=80&w=1887&auto=format&fit=crop" alt="Secangkir Kopi Hangat">
+        </div>
 
-    .login-card {
-        background-color: #4a4a4a; /* Warna abu-abu gelap seperti kartu produk */
-        padding: 2.5rem 2rem;
-        border-radius: 8px;
-        width: 100%;
-        max-width: 450px; /* Lebar maksimum form */
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
+        <!-- ================================== -->
+        <!-- KOLOM KANAN: FORM LOGIN            -->
+        <!-- ================================== -->
+        <div class="p-8 md:p-12">
+            <div class="text-center md:text-left mb-8">
+                <a href="{{ route('home') }}" class="inline-block font-serif text-2xl font-bold text-yellow-900 mb-2">Pasar Kopi Pekanbaru</a>
+                <h2 class="text-3xl font-bold text-stone-800">Selamat Datang Kembali!</h2>
+                <p class="text-stone-600 mt-2">Silakan masuk untuk melanjutkan pesanan Anda.</p>
+            </div>
 
-    .login-card h2 {
-        font-family: 'Georgia', serif; /* Font yang mirip dengan "Koleksi Kopi Nusantara" */
-        color: #E0E0E0;
-        text-align: center;
-        margin-bottom: 2rem;
-        font-size: 2rem;
-    }
-
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-        display: block;
-        color: #cccccc;
-        margin-bottom: 0.5rem;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 0.75rem;
-        background-color: #333333;
-        border: 1px solid #666666;
-        border-radius: 4px;
-        color: #ffffff;
-        font-size: 1rem;
-    }
-
-    .form-control:focus {
-        outline: none;
-        border-color: #c58c5a; /* Warna tombol sebagai highlight */
-    }
-
-    .btn-login {
-        width: 100%;
-        padding: 0.85rem;
-        background-color: #c58c5a; /* Warna yang sama dengan tombol "Tambah ke Keranjang" */
-        border: none;
-        border-radius: 4px;
-        color: #ffffff;
-        font-size: 1rem;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .btn-login:hover {
-        background-color: #b37b4f;
-    }
-    
-    .register-link {
-        text-align: center;
-        margin-top: 1.5rem;
-    }
-
-    .register-link a {
-        color: #c58c5a;
-        text-decoration: none;
-    }
-
-    .register-link a:hover {
-        text-decoration: underline;
-    }
-
-    /* Menampilkan error validasi */
-    .alert-danger {
-        color: #ff9e9e;
-        font-size: 0.9rem;
-        margin-top: 0.25rem;
-    }
-
-</style>
-
-<div class="login-container">
-    <div class="login-card">
-        <h2>Masuk Akun</h2>
-        <form method="POST" action="{{ route('login') }}">
-            @csrf  {{-- Token Keamanan Wajib di Laravel --}}
-
-            <div class="form-group">
-                <label for="email">Alamat Email</label>
-                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
-                
-                @error('email')
-                    <div class="alert-danger" role="alert">
-                        {{ $message }}
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+                <div class="space-y-6">
+                    <!-- Input Email -->
+                    <div>
+                        <label for="email" class="block mb-1 font-medium text-stone-700">Alamat Email</label>
+                        <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus 
+                               class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-yellow-900 focus:border-yellow-900 transition">
+                        @error('email')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
-                @enderror
-            </div>
 
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input id="password" type="password" class="form-control" name="password" required autocomplete="current-password">
-            </div>
+                    <!-- Input Password -->
+                    <div>
+                        <label for="password" class="block mb-1 font-medium text-stone-700">Password</label>
+                        <input id="password" type="password" name="password" required autocomplete="current-password"
+                               class="w-full px-4 py-3 border border-stone-300 rounded-lg focus:ring-yellow-900 focus:border-yellow-900 transition">
+                    </div>
 
-            <div class="form-group">
-                <button type="submit" class="btn-login">
-                    Masuk
-                </button>
-            </div>
-            
-            <div class="register-link">
-                <p style="color:#cccccc;">Belum punya akun? <a href="{{ route('register') }}">Daftar di sini</a></p>
-            </div>
-        </form>
+                    <!-- Tombol Masuk -->
+                    <div>
+                        <button type="submit" class="w-full bg-stone-800 text-white font-bold py-3 px-4 rounded-lg hover:bg-yellow-900 transition-colors shadow-sm hover:shadow-md">
+                            Masuk
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Link ke Halaman Daftar -->
+                <div class="text-center mt-6">
+                    <p class="text-sm text-stone-600">
+                        Belum punya akun? 
+                        <a href="{{ route('register') }}" class="font-medium text-yellow-900 hover:underline">Daftar di sini</a>
+                    </p>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 @endsection

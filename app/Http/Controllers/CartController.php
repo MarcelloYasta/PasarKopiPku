@@ -3,44 +3,76 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Product;
 
 class CartController extends Controller
 {
     /**
-     * Menampilkan halaman keranjang belanja.
-     *
-     * @return \Illuminate\View\View
+     * Method ini menampilkan halaman keranjang belanja.
+     * Inilah yang hilang dari file Anda.
      */
     public function index()
     {
-        // Data keranjang belanja dummy. Nantinya, ini akan diambil dari session atau database.
-        $cartItems = [
-            [
-                'id' => 1,
-                'name' => 'Kopi Robusta Gayo',
-                'price' => 85000,
-                'quantity' => 2,
-                'image' => 'https://placehold.co/600x400/555555/FFFFFF?text=Kopi+Robusta'
-            ],
-            [
-                'id' => 3,
-                'name' => 'Kopi Liberika Riau',
-                'price' => 95000,
-                'quantity' => 1,
-                'image' => 'https://placehold.co/600x400/555555/FFFFFF?text=Kopi+Liberika'
-            ],
-        ];
-
-        // Menghitung subtotal
-        $subtotal = 0;
-        foreach ($cartItems as $item) {
-            $subtotal += $item['price'] * $item['quantity'];
+        $cart = session()->get('cart', []);
+        $total = 0;
+        foreach ($cart as $id => $details) {
+            $total += $details['price'] * $details['quantity'];
         }
 
-        // Mengirim data ke view 'keranjang'
-        return view('keranjang', [
-            'cartItems' => $cartItems,
-            'subtotal' => $subtotal
-        ]);
+        return view('keranjang', compact('cart', 'total'));
+    }
+
+    /**
+     * Method ini menambahkan produk ke keranjang.
+     */
+    public function add(Product $product)
+    {
+        $cart = session()->get('cart', []);
+
+        if (isset($cart[$product->id])) {
+            $cart[$product->id]['quantity']++;
+        } else {
+            $cart[$product->id] = [
+                "name" => $product->name,
+                "quantity" => 1,
+                "price" => $product->price,
+                "image" => $product->image
+            ];
+        }
+
+        session()->put('cart', $cart);
+        return back()->with('success', 'Produk berhasil ditambahkan ke keranjang!');
+    }
+
+    /**
+     * Method ini mengubah jumlah barang di keranjang.
+     */
+    public function update(Request $request)
+    {
+        if ($request->id && $request->quantity) {
+            $cart = session()->get('cart');
+            if ($request->quantity > 0) {
+                $cart[$request->id]["quantity"] = $request->quantity;
+                session()->put('cart', $cart);
+                return back()->with('success', 'Jumlah barang berhasil diperbarui!');
+            }
+        }
+        return back()->with('error', 'Gagal memperbarui jumlah barang.');
+    }
+
+    /**
+     * Method ini menghapus barang dari keranjang.
+     */
+    public function remove(Request $request)
+    {
+        if ($request->id) {
+            $cart = session()->get('cart');
+            if (isset($cart[$request->id])) {
+                unset($cart[$request->id]);
+                session()->put('cart', $cart);
+            }
+            return back()->with('success', 'Produk berhasil dihapus dari keranjang!');
+        }
+        return back()->with('error', 'Gagal menghapus produk.');
     }
 }

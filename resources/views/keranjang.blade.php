@@ -1,4 +1,3 @@
-{{-- File: resources/views/cart/index.blade.php --}}
 @extends('layouts.app')
 
 @section('content')
@@ -8,29 +7,31 @@
 
             @if(session('success'))
                 <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-md" role="alert">
-                    <p class="font-bold">Sukses</p>
                     <p>{{ session('success') }}</p>
+                </div>
+            @endif
+             @if(session('error'))
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-md" role="alert">
+                    <p>{{ session('error') }}</p>
                 </div>
             @endif
 
             {{-- Logika untuk menampilkan keranjang jika ada isinya, atau pesan jika kosong --}}
-            @if(session('cart') && count(session('cart')) > 0)
+            {{-- [SEMPURNA] Menggunakan variabel $cart dan $total dari controller --}}
+            @if($cart && count($cart) > 0)
                 <div class="flex flex-col lg:flex-row gap-8">
                     
-                    <!-- ================================== -->
-                    <!-- KOLOM KIRI: DAFTAR ITEM          -->
-                    <!-- ================================== -->
                     <div class="lg:w-2/3">
                         <div class="bg-white shadow-md rounded-lg divide-y divide-stone-200">
-                            @php $total = 0; @endphp
-                            @foreach(session('cart') as $id => $details)
-                                @php $total += $details['price'] * $details['quantity']; @endphp
+                            @foreach($cart as $id => $details)
                                 <div class="flex items-center p-4 space-x-4">
                                     <img src="{{ $details['image'] ? asset('storage/' . $details['image']) : 'https://via.placeholder.com/150/f3f2ee/a18a62?text=Kopi' }}" class="h-24 w-24 object-cover rounded-md" alt="{{ $details['name'] }}">
                                     
                                     <div class="flex-grow">
                                         <a href="#" class="font-bold text-lg hover:text-yellow-900">{{ $details['name'] }}</a>
                                         <p class="text-stone-600">Rp {{ number_format($details['price'], 0, ',', '.') }}</p>
+                                        
+                                        {{-- [SEMPURNA] Form untuk menghapus item --}}
                                         <form action="{{ route('cart.remove') }}" method="POST" class="mt-1">
                                             @csrf
                                             <input type="hidden" name="id" value="{{ $id }}">
@@ -39,6 +40,7 @@
                                     </div>
 
                                     <div class="flex flex-col items-end space-y-2">
+                                       {{-- [SEMPURNA] Form untuk update kuantitas --}}
                                        <form action="{{ route('cart.update') }}" method="POST" class="flex items-center">
                                             @csrf
                                             <input type="hidden" name="id" value="{{ $id }}">
@@ -53,9 +55,6 @@
                         </div>
                     </div>
 
-                    <!-- ================================== -->
-                    <!-- KOLOM KANAN: RINGKASAN & CHECKOUT -->
-                    <!-- ================================== -->
                     <div class="lg:w-1/3">
                         <div class="bg-white shadow-md rounded-lg p-6 border sticky top-24">
                             <h2 class="text-2xl font-bold font-serif mb-4 border-b border-stone-200 pb-3">Ringkasan Pesanan</h2>

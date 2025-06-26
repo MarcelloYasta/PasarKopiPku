@@ -12,7 +12,6 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        // Cukup tampilkan view-nya saja
         return view('auth.login');
     }
 
@@ -21,25 +20,24 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        // 1. Validasi input
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
 
-        // 2. Coba lakukan login (autentikasi)
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // 3. Cek Role dan Arahkan (Otorisasi)
-            if (auth()->user()->role === 'admin') {
-                return redirect()->intended('/admin'); // Arahkan admin ke dasbornya
+            // [SEMPURNA] Cek role menggunakan accessor dan redirect ke nama rute
+            if (auth()->user()->is_admin) {
+                // Perbaikan utama: Mengarahkan ke rute 'admin.dashboard'
+                return redirect()->intended(route('admin.dashboard'));
             }
 
-            return redirect()->intended('/'); // Arahkan pengunjung ke halaman utama
+            // Sesuai permintaan: Mengarahkan pengguna biasa ke halaman produk
+            return redirect()->intended(route('products.index'));
         }
 
-        // 4. Jika login gagal
         return back()->withErrors([
             'email' => 'Email atau password yang Anda masukkan salah.',
         ])->onlyInput('email');

@@ -51,32 +51,57 @@
 
     <!-- Bagian 3: Produk Unggulan dengan Desain Baru -->
     <section id="produk" class="py-20 bg-white">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <h2 class="font-serif text-4xl font-bold text-stone-900">Koleksi Terlaris</h2>
-                <p class="mt-2 text-gray-600">Pilihan favorit dari para penikmat kopi sejati.</p>
-            </div>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {{-- Contoh Produk Statis 1 --}}
-                <div class="bg-white rounded-lg shadow-md overflow-hidden group relative transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 flex flex-col">
-                    <div class="relative">
-                        <a href="#">
-                            <span class="absolute top-4 left-4 bg-yellow-900 text-white text-xs font-bold px-3 py-1 rounded-full z-10">Roasted Beans</span>
-                            <img class="h-80 w-full object-cover transform group-hover:scale-110 transition-transform duration-500" src="https://images.unsplash.com/photo-1599160539326-25f03d29944a?q=80&w=1887&auto=format&fit=crop" alt="Kopi Robusta Riau">
-                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        </a>
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <h3 class="font-serif text-xl font-bold text-stone-900 flex-grow"><a href="#" class="hover:text-yellow-900">Robusta Pahit Riau</a></h3>
-                        <p class="mt-4 text-lg font-semibold text-stone-800">Rp 85.000</p>
-                        <button class="mt-4 w-full text-center inline-block bg-stone-800 text-white font-bold py-2 px-4 rounded hover:bg-yellow-900 transition-colors">Tambah ke Keranjang</button>
-                    </div>
-                </div>
-                {{-- Tambahkan contoh produk statis lainnya di sini jika perlu --}}
-            </div>
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="font-serif text-4xl font-bold text-stone-900">Koleksi Terlaris</h2>
+            <p class="mt-2 text-gray-600">Pilihan favorit dari para penikmat kopi sejati.</p>
         </div>
-    </section>
+        
+        {{-- [SEMPURNA] Menampilkan produk dinamis dari controller --}}
+        @if ($featuredProducts->count() > 0)
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                @foreach ($featuredProducts as $product)
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden group relative transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 flex flex-col">
+                        <div class="relative">
+                            {{-- Nanti link ini bisa diarahkan ke halaman detail produk --}}
+                            <a href="#">
+                                <span class="absolute top-4 left-4 bg-yellow-900 text-white text-xs font-bold px-3 py-1 rounded-full z-10">{{ $product->category->name }}</span>
+                                <img class="h-80 w-full object-cover transform group-hover:scale-110 transition-transform duration-500" 
+                                     src="{{ $product->image ? asset('storage/' . $product->image) : 'https://via.placeholder.com/400/f3f2ee/a18a62?text=Kopi' }}" 
+                                     alt="[Gambar {{ $product->name }}]">
+                                <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            </a>
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="font-serif text-xl font-bold text-stone-900 flex-grow">
+                                <a href="#" class="hover:text-yellow-900">{{ $product->name }}</a>
+                            </h3>
+                            <p class="mt-4 text-lg font-semibold text-stone-800">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                            
+                            {{-- [SEMPURNA] Form "Tambah ke Keranjang" yang fungsional --}}
+                            <form action="{{ route('cart.add', $product->id) }}" method="POST" class="mt-4">
+                                @csrf
+                                <button type="submit" class="w-full text-center inline-block bg-stone-800 text-white font-bold py-2 px-4 rounded hover:bg-yellow-900 transition-colors">
+                                    Tambah ke Keranjang
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <div class="text-center text-gray-500">
+                <p>Produk unggulan akan segera hadir.</p>
+            </div>
+        @endif
+        
+        <div class="text-center mt-12">
+            <a href="{{ route('products.index') }}" class="text-yellow-900 font-bold hover:underline text-lg">
+                Lihat Semua Koleksi &rarr;
+            </a>
+        </div>
+    </div>
+</section>
 
     <!-- Bagian 4: Proses Kami (Storytelling) -->
     <section id="tentang" class="py-20 bg-stone-900 text-white">
