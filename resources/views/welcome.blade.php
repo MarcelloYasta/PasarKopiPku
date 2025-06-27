@@ -150,15 +150,5 @@
     </section>
     
     <!-- Bagian 6: Newsletter / Call to Action -->
-    <section class="bg-yellow-100">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-            <h2 class="font-serif text-3xl font-bold text-yellow-900">Dapatkan Info & Penawaran Spesial</h2>
-            <p class="mt-2 text-yellow-800 max-w-xl mx-auto">Jadilah yang pertama tahu tentang produk baru, diskon, dan cerita kopi eksklusif dari kami.</p>
-            <form action="#" method="POST" class="mt-8 max-w-md mx-auto flex">
-                <input type="email" name="email" placeholder="Masukkan alamat email Anda" class="w-full px-4 py-3 rounded-1-md border-gray-300 focus:ring-yellow-800 focus:border-yellow-800" required>
-                <button type="submit" class="bg-stone-800 hover:bg-yellow-900 text-white font-bold px-6 py-3 rounded-r-md">Subscribe</button>
-            </form>
-        </div>
-    </section>
 
 @endsection

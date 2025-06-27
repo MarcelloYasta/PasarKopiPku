@@ -134,7 +134,7 @@
                 </div>
             </div>
             <div class="mt-12 pt-8 border-t border-stone-800 text-center text-sm text-stone-500">
-                &copy; {{ date('Y') }} {{ config('app.name') }}. Dirakit dengan penuh cinta di Pekanbaru.
+                &copy; {{ date('Y') }} {{ config('app.name') }}. Dibuat dengan penuh cinta di Pasar Kopi Pekanbaru.
             </div>
         </div>
     </footer>

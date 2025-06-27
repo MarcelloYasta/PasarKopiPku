@@ -1,72 +1,74 @@
 @extends('admin.app')
 
-@section('content')
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-semibold text-gray-800">Manajemen Pesanan</h1>
-    </div>
-    <div class="bg-white p-6 rounded-lg shadow-md">
-        <table class="w-full text-left">
-            <thead>
-                <tr class="border-b">
-                    <th class="py-2 px-4">ID Pesanan</th>
-                    <th class="py-2 px-4">Nama Pelanggan</th>
-                    <th class="py-2 px-4">Tanggal</th>
-                    <th class="py-2 px-4">Total</th>
-                    <th class="py-2 px-4 text-center">Status</th>
-                    <th class="py-2 px-4">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($orders as $order)
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="py-4 px-4 font-medium">#{{ $order->id }}</td>
-                        <td class="py-4 px-4">{{ $order->user->name }}</td>
-                        <td class="py-4 px-4">{{ $order->created_at->format('d M Y, H:i') }}</td>
-                        <td class="py-4 px-4">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
-                        <td class="py-4 px-4 text-center">
-                            {{-- [SEMPURNA] Warna badge status sekarang dinamis --}}
-                            @php
-                                $statusClass = '';
-                                switch ($order->status) {
-                                    case 'pending':
-                                        $statusClass = 'bg-yellow-200 text-yellow-800';
-                                        break;
-                                    case 'processing':
-                                        $statusClass = 'bg-blue-200 text-blue-800';
-                                        break;
-                                    case 'completed':
-                                        $statusClass = 'bg-green-200 text-green-800';
-                                        break;
-                                    case 'shipped':
-                                        $statusClass = 'bg-indigo-200 text-indigo-800';
-                                        break;
-                                    case 'cancelled':
-                                        $statusClass = 'bg-red-200 text-red-800';
-                                        break;
-                                    default:
-                                        $statusClass = 'bg-gray-200 text-gray-800';
-                                }
-                            @endphp
-                            <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $statusClass }}">
-                                {{ ucfirst($order->status) }}
-                            </span>
-                        </td>
-                        <td class="py-4 px-4">
-                            {{-- [SEMPURNA] Link Detail sekarang berfungsi --}}
-                            <a href="{{ route('admin.orders.show', $order->id) }}" class="text-indigo-600 hover:text-indigo-900 font-semibold">Detail</a>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="6" class="text-center py-6">Belum ada data pesanan.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+@section('title', 'Manajemen Pesanan')
 
-        {{-- [SEMPURNA] Menampilkan link untuk Paginasi --}}
-        <div class="mt-6">
-            {{ $orders->links() }}
+@section('content')
+    {{-- HEADER HALAMAN --}}
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+        <div>
+            <h1 class="text-3xl font-serif font-bold text-stone-800">Manajemen Pesanan</h1>
+            <p class="mt-1 text-stone-600">Lihat dan kelola semua transaksi yang masuk.</p>
         </div>
+        {{-- Nanti di sini bisa ditambahkan tombol filter atau export --}}
+    </div>
+
+    {{-- DAFTAR PESANAN SEBAGAI KARTU --}}
+    <div class="space-y-4">
+        @forelse($orders as $order)
+            <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 items-center p-4">
+                    
+                    {{-- ID Pesanan & Tanggal --}}
+                    <div class="col-span-2 sm:col-span-1">
+                        <p class="font-bold text-stone-800">#{{ $order->id }}</p>
+                        <p class="text-xs text-stone-500">{{ $order->created_at->format('d M Y, H:i') }}</p>
+                    </div>
+
+                    {{-- Nama Pelanggan --}}
+                    <div class="sm:col-span-2">
+                        <p class="text-sm text-stone-500">Pelanggan</p>
+                        <p class="font-semibold text-stone-800">{{ $order->user->name }}</p>
+                    </div>
+
+                    {{-- Total Pembayaran --}}
+                    <div class="text-left sm:text-right">
+                        <p class="text-sm text-stone-500">Total</p>
+                        <p class="font-bold text-stone-800">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</p>
+                    </div>
+
+                    {{-- Status & Aksi --}}
+                    <div class="col-span-2 sm:col-span-1 flex flex-col items-start sm:items-end space-y-2">
+                        @php
+                            $statusClass = 'bg-gray-200 text-gray-800'; // Default
+                            switch ($order->status) {
+                                case 'pending':    $statusClass = 'bg-yellow-100 text-yellow-800 border border-yellow-300'; break;
+                                case 'processing': $statusClass = 'bg-blue-100 text-blue-800 border border-blue-300'; break;
+                                case 'completed':  $statusClass = 'bg-green-100 text-green-800 border border-green-300'; break;
+                                case 'shipped':    $statusClass = 'bg-indigo-100 text-indigo-800 border border-indigo-300'; break;
+                                case 'cancelled':  $statusClass = 'bg-red-100 text-red-800 border border-red-300'; break;
+                            }
+                        @endphp
+                        <span class="px-3 py-1 text-xs font-semibold rounded-full {{ $statusClass }}">
+                            {{ ucfirst($order->status) }}
+                        </span>
+                        <a href="{{ route('admin.orders.show', $order->id) }}" class="text-sm font-semibold text-amber-700 hover:text-amber-900 hover:underline">
+                            Lihat Detail &rarr;
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        @empty
+            <div class="text-center py-16 bg-white rounded-lg shadow-md">
+                <svg class="mx-auto h-12 w-12 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                <h3 class="mt-4 text-lg font-semibold text-stone-900">Belum Ada Pesanan</h3>
+                <p class="mt-1 text-sm text-stone-500">Saat ada transaksi baru, pesanan akan muncul di sini.</p>
+            </div>
+        @endforelse
+    </div>
+
+    {{-- Link Paginasi dengan Desain Baru --}}
+    <div class="mt-8">
+        {{ $orders->links() }}
     </div>
 @endsection
