@@ -1,20 +1,20 @@
 @extends('admin.app')
 
-@section('title', "Detail Pesanan #{$order->id}") {{-- Judul dinamis untuk tab browser --}}
+@section('title', "Detail Pesanan #{$order->id}")
 
 @section('content')
-    {{-- HEADER HALAMAN DENGAN NAVIGASI KEMBALI --}}
+    {{-- HEADER HALAMAN --}}
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
         <div>
             <h1 class="text-3xl font-serif font-bold text-stone-800">Detail Pesanan #{{ $order->id }}</h1>
             <p class="mt-1 text-stone-600">Dipesan oleh {{ $order->user->name }} pada {{ $order->created_at->format('d F Y, H:i') }}</p>
         </div>
-        <a href="{{ route('admin.orders.index') }}" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-white border border-stone-300 rounded-md font-semibold text-xs text-stone-700 uppercase tracking-widest shadow-sm hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+        <a href="{{ route('admin.orders.index') }}" class="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 bg-white border border-stone-300 rounded-md font-semibold text-xs text-stone-700 uppercase tracking-widest shadow-sm hover:bg-stone-50">
             &larr; Kembali ke Daftar Pesanan
         </a>
     </div>
 
-    {{-- NOTIFIKASI SUKSES SETELAH UPDATE STATUS --}}
+    {{-- NOTIFIKASI SUKSES --}}
     @if (session('success'))
         <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-r-lg" role="alert">
             <p class="font-bold">Sukses!</p>
@@ -31,38 +31,38 @@
                     <h3 class="text-xl font-serif font-bold text-stone-800">Barang yang Dipesan</h3>
                 </div>
                 
-                <div class="space-y-4">
-                    {{-- Loop untuk setiap item produk --}}
-                    @foreach($order->items as $item)
-                    <div class="flex items-center space-x-4">
-                        <img src="{{ $item->product->image ? asset('storage/' . $item->product->image) : 'https://placehold.co/100x100/f3f2ee/a18a62?text=Kopi' }}" alt="{{ $item->product->name ?? 'Produk Dihapus' }}" class="h-16 w-16 object-cover rounded-md">
-                        <div class="flex-grow">
-                            <p class="font-semibold text-stone-800">{{ $item->product->name ?? 'Produk Dihapus' }}</p>
-                            <p class="text-sm text-stone-600">{{ $item->quantity }} x Rp {{ number_format($item->price, 0, ',', '.') }}</p>
-                        </div>
-                        <p class="font-semibold text-stone-800">Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</p>
-                    </div>
-                    @endforeach
-                </div>
-                
-                {{-- Bagian Total --}}
-                <div class="mt-6 pt-4 border-t border-stone-200 space-y-2">
-                    <div class="flex justify-between text-stone-600">
-                        <span>Subtotal</span>
-                        <span>Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
-                    </div>
-                    <div class="flex justify-between text-xl font-bold text-stone-900 mt-2 pt-2 border-t border-dashed">
-                        <span>Total Pesanan</span>
-                        <span>Rp {{ number_format($order->total_amount, 0, ',', '.') }}</span>
-                    </div>
-                </div>
+                {{-- [SESUAIKAN] Menggunakan tabel yang lebih rapi --}}
+                <table class="w-full text-left">
+                    <thead>
+                        <tr>
+                            <th class="py-2 px-2">Produk</th>
+                            <th class="py-2 px-2 text-center">Jumlah</th>
+                            <th class="py-2 px-2 text-right">Harga Satuan</th>
+                            <th class="py-2 px-2 text-right">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($order->items as $item)
+                        <tr class="border-b">
+                            <td class="py-4 px-2">{{ $item->product->name ?? 'Produk Dihapus' }}</td>
+                            <td class="py-4 px-2 text-center">{{ $item->quantity }}</td>
+                            <td class="py-4 px-2 text-right">Rp {{ number_format($item->price, 0, ',', '.') }}</td>
+                            <td class="py-4 px-2 text-right">Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</td>
+                        </tr>
+                        @endforeach
+                        <tr class="font-bold">
+                            <td colspan="3" class="text-right py-4 px-2">Total Pesanan:</td>
+                            <td class="text-right py-4 px-2">Rp {{ number_format($order->total_amount, 0, ',', '.') }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
         {{-- KOLOM KANAN: INFO PELANGGAN, PENGIRIMAN, & STATUS --}}
         <div class="space-y-8">
             <div class="bg-white p-6 rounded-lg shadow-md">
-                <div class="flex items-center border-b border-stone-200 pb-4 mb-4">
+                 <div class="flex items-center border-b border-stone-200 pb-4 mb-4">
                     <svg class="w-6 h-6 mr-3 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     <h3 class="text-xl font-serif font-bold text-stone-800">Info Pelanggan</h3>
                 </div>
@@ -81,11 +81,27 @@
                      <p><strong>Alamat Kirim:</strong><br><span class="text-stone-600">{{ $order->shipping_address }}</span></p>
                     <p><strong>Metode Pembayaran:</strong> <span class="font-semibold">{{ $order->payment_method ?? 'Belum Ditentukan' }}</span></p>
                     <p><strong>Status Pembayaran:</strong> <span class="font-semibold">{{ ucfirst($order->payment_status) }}</span></p>
+                    
+                    {{-- Menampilkan Bukti Pembayaran --}}
+                    @if ($order->payment_proof)
+                        <div class="pt-4 mt-4 border-t border-dashed">
+                            <p class="font-semibold mb-2">Bukti Pembayaran:</p>
+                            <a href="{{ asset('storage/' . $order->payment_proof) }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-stone-100 border border-stone-300 rounded-md font-semibold text-xs text-stone-700 uppercase tracking-widest shadow-sm hover:bg-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Lihat / Unduh Bukti
+                            </a>
+                        </div>
+                    @else
+                        <div class="pt-4 mt-4 border-t border-dashed">
+                            <p class="font-semibold">Bukti Pembayaran:</p>
+                            <p class="text-sm text-stone-500">Tidak ada bukti pembayaran (misalnya untuk pesanan COD).</p>
+                        </div>
+                    @endif
                 </div>
             </div>
 
             <div class="bg-white p-6 rounded-lg shadow-md">
-                <div class="flex items-center border-b border-stone-200 pb-4 mb-4">
+                 <div class="flex items-center border-b border-stone-200 pb-4 mb-4">
                      <svg class="w-6 h-6 mr-3 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M7 7l-3.5 3.5a9 9 0 1012.02-3.02M20 20v-5h-5"></path></svg>
                     <h3 class="text-xl font-serif font-bold text-stone-800">Update Status</h3>
                 </div>

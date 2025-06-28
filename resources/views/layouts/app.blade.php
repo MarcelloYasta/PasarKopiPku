@@ -21,8 +21,9 @@
     <header class="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50">
         <nav x-data="{ open: false }" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <a href="{{ route('home') }}" class="text-2xl md:text-3xl font-bold font-serif text-yellow-900 tracking-wider flex-shrink-0">
-                    Pasar Kopi Pekanbaru
+            <img class="h-12 w-auto" src="{{ asset('image/logo.png') }}" alt="Logo Pasar Kopi Pekanbaru">
+                <a href="{{ route('home') }}" class="text-2xl md:text-3xl font-bold font-serif text-gray-700 tracking-wider flex-shrink-0">
+                        Pasar Kopi Pekanbaru
                 </a>
 
                 <div class="hidden lg:flex items-center space-x-10 mx-auto">
@@ -134,7 +135,7 @@
                 </div>
             </div>
             <div class="mt-12 pt-8 border-t border-stone-800 text-center text-sm text-stone-500">
-                &copy; {{ date('Y') }} {{ config('app.name') }}. Dibuat dengan penuh cinta di Pasar Kopi Pekanbaru.
+                &copy; {{ date('Y') }} AIO Group.
             </div>
         </div>
     </footer>
